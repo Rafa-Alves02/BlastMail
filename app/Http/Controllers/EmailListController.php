@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\yes;
 use Illuminate\Http\Request;
 use App\Models\EmailList;
- // Assuming you have a model named EmailList
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
+// Assuming you have a model named EmailList
 
 
 class EmailListController extends Controller
@@ -26,12 +28,10 @@ class EmailListController extends Controller
     public function create()
     {
 
-    
+
 
 
         return view('email-list.create');
-
-
     }
 
     /**
@@ -41,10 +41,26 @@ class EmailListController extends Controller
     {
         $data = $request->validate([
             'title' => ['required|string|max:255'],
-            'Listfile' => ['required|file|' ,'mimesTypes:csv,txt,xlsx,xls'],
+            'Listfile' => ['required|file', 'mimes:csv,txt,xlsx,xls'],
         ]);
 
-        $file = request()->file('Listfile');
+
+        $items = $this->  getEmailsFromCsvFile($request->file('file'));
+
+        DB::transaction(function () use ($request, $items) {
+            $emailList = EmailList::query()->create([
+                'title' => $request->title,
+            ]);
+
+            $emailList->subscribers()->createMany($items);
+        });
+
+        return to_route('email-list.index');
+    }
+
+    private function getEmailsFromCsvFile(\Illuminate\Http\UploadedFile $file): array
+    {
+        
         $fileHandler = fopen($file->getRealPath(), 'r');
         $items = [];
 
@@ -54,22 +70,14 @@ class EmailListController extends Controller
             }
             $items[] = [
                 'email' => $row[1],
-                'name' => $row[0]?? null,
+                'name' => $row[0] ?? null,
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
-
-            fclose($fileHandler);
         }
 
-        $emaliList=EmailList::query()->create([
-            'title' => $request->title,
-        ]);
-
-        $emaliList -> subscribers() -> createMany($items);
-        
-
-        return to_route('email-list.index');
+        fclose($fileHandler);
+        return $items;
     }
 
     /**
