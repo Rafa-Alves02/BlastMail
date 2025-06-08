@@ -17,8 +17,13 @@ class EmailListController extends Controller
      */
     public function index()
     {
+
+        $emailLists = EmailList::query()->paginate();
+
+        $emailLists -> isNotEmpty(); 
+
         return view('email-list.index', [
-            'emailsLists' => EmailList::query()->paginate(),
+            'emailLists' => $emailLists, 
         ]);
     }
 
