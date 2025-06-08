@@ -1,3 +1,6 @@
+
+
+
 <nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -15,6 +18,10 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('email-list.index')" :active="request()->routeIs('email-list.*')">
+                        {{ __('Email List') }}
+                    </x-nav-link>
+
                 </div>
             </div>
 
@@ -70,6 +77,11 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+
+             <x-responsive-nav-link :href="route('email-list.index')" :active="request()->routeIs('email-list.*')">
+                {{ __('Email List') }}
+            </x-responsive-nav-link>
+
         </div>
 
         <!-- Responsive Settings Options -->
