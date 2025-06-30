@@ -10,19 +10,30 @@
 
     </x-slot>
 
-    <x-card>
+
+    <x-card class= "space-y-4"> 
+    <div class= "flex justify-between">
+        <x-link-button :href= "route('email-list.create')">
+            {{ __ ('Create your first email list')}}
+    </x-link-button> 
+    <x-form :action = "route('email-list.index')" class="w-1/3">
+        @csrf
+        <x-input-label for="search" :value="__('Search')" />
+    <x-text-input name="search" :placeholder= "__('Search')" :value=$search />
+    </div>
+
 
         @unless($emailLists->isnotEmpty())
 
-        <x-table :headers="[]">
+        <x-table :headers="['#', __('Email List', __ ('# Subcribers'), __ ('Actions')]">
             <x-slot:name:"body">
                 @foreach ($emailLists as $list)
                 <tr>
-                    <x-td class="p-4">{{ $list->id }}</x-td>
-                    <x-td class="p-4">{{ $list->name }}</x-td>
-                    <x-td class="p-4">{{ $list->subscribers->count() }}</x-td>
-                    <x-td class="p-4">{{}} 
-                    </x-td>
+                    <x-table.td class="p-4">{{ $list->id }}</x-table.td>
+                    <x-table.td class="p-4">{{ $list->name }}</x-table.td>
+                    <x-table.td class="p-4">{{ $list->subscribers->count() }}</x-table.td>
+                    <x-table.td class="p-4">{{}} 
+                    </x-table.td>
                 </tr>
                 @endforeach
                 </x-slot>
